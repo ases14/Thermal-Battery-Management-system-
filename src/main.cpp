@@ -1,49 +1,10 @@
 #include <Arduino.h>
-#include <_config.h>
+// #include <_config.h>
+#include <utilis.h>
 #include <Adafruit_INA219.h>
 
 Adafruit_INA219 ina219;
-
-struct DataSet
-{
-  float voltage_mv = 0;
-  float current_mA = 0;
-  float power_mw = 0;
-  float temp = 0;
-};
-
-bool getPowerData(DataSet *dataSet)
-{
-  long int clock_1 = millis();
-
-  double t_current = 0;
-  double t_loadVoltage = 0;
-  double t_power = 0;
-
-  int counter = 0;
-
-  while (millis() - clock_1 < 1000)
-  {
-    long int clock_2 = millis();
-
-    float shuntvoltage = ina219.getShuntVoltage_mV();
-    float busvoltage = ina219.getBusVoltage_V();
-
-    t_current += ina219.getCurrent_mA();
-    t_loadVoltage += busvoltage + (shuntvoltage / 1000);
-    t_power += ina219.getPower_mW();
-
-    counter++;
-
-    long int clock_duration_2 = millis() - clock_2;
-    int wait = int((float(1000) / Sample_Rate)) - clock_duration_2;
-    delay(wait);
-  }
-
-  dataSet->current_mA = -1 * t_current / counter;
-  dataSet->voltage_mv = t_loadVoltage / counter;
-  dataSet->power_mw = t_power / counter;
-}
+DataSet dataSet;
 
 void setup()
 {
@@ -53,7 +14,7 @@ void setup()
     delay(1);
   }
 
-  uint32_t currentFrequency;
+  // uint32_t currentFrequency;
 
   Serial.println("Success: Serial communication established!");
 
@@ -79,13 +40,11 @@ void setup()
 
 void loop()
 {
-  DataSet dataSet;
-  getPowerData(&dataSet);
-  
+  getPowerData(&dataSet, &ina219);
+
   Serial.println(dataSet.voltage_mv);
   Serial.println(dataSet.current_mA);
   Serial.println(dataSet.power_mw);
   Serial.println();
   Serial.println();
-  // delay(1000);
 }
