@@ -12,7 +12,7 @@ struct DataSet
   float temp = 0;
 };
 
-bool getPowerData(DataSet dataSet)
+bool getPowerData(DataSet *dataSet)
 {
   long int clock_1 = millis();
 
@@ -40,9 +40,9 @@ bool getPowerData(DataSet dataSet)
     delay(wait);
   }
 
-  dataSet.current_mA = t_current / counter;
-  dataSet.voltage_mv = t_loadVoltage / counter;
-  dataSet.power_mw = t_power / counter;
+  dataSet->current_mA = -1 * t_current / counter;
+  dataSet->voltage_mv = t_loadVoltage / counter;
+  dataSet->power_mw = t_power / counter;
 }
 
 void setup()
@@ -55,19 +55,21 @@ void setup()
 
   uint32_t currentFrequency;
 
-  Serial.println("Serial communication established successfully!");
+  Serial.println("Success: Serial communication established!");
 
   // Initialize the INA219.
   // By default the initialization will use the largest range (32V, 2A).  However
   // you can call a setCalibration function to change this range (see comments).
-  // if (!ina219.begin())
-  // {
-  //   Serial.println("Failed to find INA219 chip");
-  //   while (1)
-  //   {
-  //     delay(10);
-  //   }
-  // }
+  if (!ina219.begin())
+  {
+    Serial.println("Failed to find INA219 chip");
+    while (1)
+    {
+      delay(10);
+    }
+  }
+
+  Serial.println("Success: Found INA219!");
 
   // To use a slightly lower 32V, 1A range (higher precision on amps):
   // ina219.setCalibration_32V_1A();
@@ -78,7 +80,12 @@ void setup()
 void loop()
 {
   DataSet dataSet;
-  getPowerData(dataSet);
-  Serial.println(dataSet.temp);
-  delay(1000);
+  getPowerData(&dataSet);
+  
+  Serial.println(dataSet.voltage_mv);
+  Serial.println(dataSet.current_mA);
+  Serial.println(dataSet.power_mw);
+  Serial.println();
+  Serial.println();
+  // delay(1000);
 }
