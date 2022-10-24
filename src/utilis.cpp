@@ -3,7 +3,17 @@
 // #include <Arduino.h>
 // #include <Adafruit_INA219.h>
 
-void getPowerData(DataSet *dataSet, Adafruit_INA219 *ina219)
+double getTemparature(int ANALOG_PIN)
+{
+    double temp;
+    int data = analogRead(ANALOG_PIN);
+    temp = log(10000.0 * ((1024.0 / data - 1)));
+    temp = 1 / (0.001129148 + (0.000234125 + (0.0000000876741 * temp * temp)) * temp); // in kelvin
+    temp = temp - 273.15; //in celceus
+    return temp;
+}
+
+void updatePowerData(DataSet *dataSet, Adafruit_INA219 *ina219)
 {
     long int clock_1 = millis();
 

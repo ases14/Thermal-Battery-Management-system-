@@ -13,6 +13,7 @@ struct DataSet
     float temp = 0;
 };
 
-void getPowerData(DataSet *dataSet, Adafruit_INA219 *ina219);
+void updatePowerData(DataSet *dataSet, Adafruit_INA219 *ina219);
+double getTemparature(int ANALOG_PIN);
 
 #endif

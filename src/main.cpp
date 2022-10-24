@@ -40,7 +40,7 @@ void setup()
 
 void loop()
 {
-  getPowerData(&dataSet, &ina219);
+  updatePowerData(&dataSet, &ina219);
 
   Serial.println(dataSet.voltage_mv);
   Serial.println(dataSet.current_mA);
