@@ -41,7 +41,7 @@ void updatePowerData(DataSet *dataSet, Adafruit_INA219 *ina219)
         delay(wait);
     }
 
-    dataSet->current_mA = -1 * t_current / counter;
+    dataSet->current_mA = t_current / counter;
     dataSet->voltage_mv = t_loadVoltage / counter;
     dataSet->power_mw = t_power / counter;
 }
